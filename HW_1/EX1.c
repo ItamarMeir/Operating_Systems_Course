@@ -4,9 +4,12 @@
 #include <signal.h>
 #include <stdio.h> 
 #include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 /**
- * Function: my_fork
+ * Function: my_fork (1)
  * -----------------
  * Calls fork() to create a new process.
  * 
@@ -55,7 +58,7 @@ pid_t my_fork(void){
  */
 
 /**
- * Function: print_pids
+ * Function: print_pids (2)
  * --------------------
  * Prints the process IDs and their generations to the specified file descriptor.
  * 
@@ -79,15 +82,73 @@ void print_pids(int fd, short unsigned int N, short unsigned int G) {
         }    
     }
     dprintf(fd, "My pid is %d. My generation is %d.\n", getpid(), generation);  // Print process ID and generation
-    exit(0); // Exit child process 
+   if (generation != 0) exit(0); // Exit child process 
 }
 
+/**
+ * Write the function: void count_lines (short unsigned int G).
+ * 
+ * This function counts the number of lines in the file out.txt (to which we will write output, as 
+ * described below); and then prints to the screen output which follows the following format: 
+ * Number of lines by processes of generation 2 is 9 
+ * Number of lines by processes of generation 1 is 3 
+ * Number of lines by processes of generation 0 is 1 
+ * 
+ * Limitations and hints: 
+ *  - The function should use a single loop. 
+ *  - The function should generate either G-1 or G new processes.
+ *  - Each process should print a single line: the line referring to generation g should be 
+ *    printed by a process of generation g. 
+ *  - You may use the commands system(), grep and wc. 
+ *  - The output should be written in decreasing generation order (as in the sample above). 
+ */
+
+/**
+ * Function: count_lines (3)
+ * ---------------------
+ * Counts the number of lines in the file out.txt and prints the number of lines for each generation.
+ * 
+ * Parameters:
+ *  G - maximum generation of processes
+ */
+void count_lines(short unsigned int G) {
+    char command[256];
+    unsigned int counter = 0, gen = 0;
+
+    for(int i=0; i<G; i++){     
+        pid_t pid = my_fork();      // Create a new process
+        gen = i;                    // Set generation
+        if (pid == 0){  
+            // Child process
+            gen = i+1;            // Increment generation
+            continue;           // Continue loop
+        }
+        break;                  // The parent process should break the loop
+    }
+            wait(NULL); // Wait for the child to die
+            sprintf(command, "count=$(grep 'My generation is %d.' out.txt | wc -l); \
+                echo \"Number of lines by processes of generation %d is $count\"", gen, gen);   // Create command
+                // Saves the number of lines in the file out.txt to the variable count
+            system(command);                // Execute command
+            if (gen != 0) exit(0);          // Exit child process
+}
+
+
 int main(void) {
-    int fd = STDOUT_FILENO; // File descriptor (using standard output for this example)
+    //int fd = STDOUT_FILENO; // File descriptor (using standard output for this example)
     short unsigned int N = 3; // Number of iterations each process should perform
     short unsigned int G = 2; // Maximum generation of processes
 
-    print_pids(fd, N, G);
+    int fd = open("out.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644); // Open file for writing, creating it if it doesn't exist,\
+                                                                         and truncating it if it does. 0644 is the file permissions.
+    if (fd == -1) {
+        perror("open");
+        return 1;
+    }
+    print_pids(fd, N, G);   // Call task 2
+    close(fd);  // Close file descriptor
 
+    count_lines(G); // Call task 3
     return 0;
 }
+
