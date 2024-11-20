@@ -31,7 +31,7 @@ pid_t my_fork(void){
 }
 
 /**
- * For each g=0, 1, ..., G, the function should print N_g lines in the following format:
+ * For each g=0, 1, ..., G, the function should print N^g lines in the following format:
  * My pid is p. My generation is g.
  * 
  * Where:
