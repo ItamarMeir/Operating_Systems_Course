@@ -22,12 +22,12 @@
  */
 
 pid_t my_fork(void){
-    pid_t pid = fork();
-    if (pid < 0) {
+    pid_t pid = fork(); // Call fork()
+    if (pid < 0) {    // Check if fork() failed
         perror ("Fork failed");
-        exit(1);
+        exit(1);        // Exit process
     }
-    return pid;
+    return pid; // Return process ID
 }
 
 /**
@@ -84,7 +84,7 @@ void print_pids(int fd, short unsigned int N, short unsigned int G) {
 
 int main(void) {
     int fd = STDOUT_FILENO; // File descriptor (using standard output for this example)
-    short unsigned int N = 2; // Number of iterations each process should perform
+    short unsigned int N = 3; // Number of iterations each process should perform
     short unsigned int G = 2; // Maximum generation of processes
 
     print_pids(fd, N, G);
