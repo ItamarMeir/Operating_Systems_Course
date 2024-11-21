@@ -133,6 +133,34 @@ void count_lines(short unsigned int G) {
             if (gen != 0) exit(0);          // Exit child process
 }
 
+/**
+ * Function: print_threads
+ * -----------------------
+ * Creates N threads, each of which prints a message indicating its thread number.
+ * The order of the prints MUST appear in the correct order.
+ * 
+ * Parameters:
+ *  N - the number of threads to create
+ * 
+ * Each thread will print: "Hi. I'm thread number i" where i is the i-th thread created.
+ */
+
+void print_threads(short unsigned int N){
+    unsigned int thread_num;            // Thread number
+    for(int i=N-1; i>=1; i--){         // Loop through threads
+        pid_t pid = my_fork();        // Create a new process
+        thread_num = i;              // Set thread number
+        if (pid == 0){              
+            // Child process
+            thread_num = i-1;    // Decrement thread number
+            continue;        // Continue loop
+        }
+        break;          // The parent process should break the loop
+    }
+    wait(NULL); // Wait for the child to die
+    dprintf(STDOUT_FILENO, "Hi. I'm thread %d\n", thread_num);  // Print thread number
+    if (thread_num != N-1) exit(0); // Exit children processes
+}
 
 int main(void) {
     //int fd = STDOUT_FILENO; // File descriptor (using standard output for this example)
@@ -145,10 +173,12 @@ int main(void) {
         perror("open");
         return 1;
     }
-    print_pids(fd, N, G);   // Call task 2
+    //print_pids(fd, N, G);   // Call task 2
     close(fd);  // Close file descriptor
 
-    count_lines(G); // Call task 3
+    //count_lines(G); // Call task 3
+
+    print_threads(10);
     return 0;
 }
 
