@@ -113,7 +113,7 @@ void print_pids(int fd, short unsigned int N, short unsigned int G) {
  */
 void count_lines(short unsigned int G) {
     char command[256];
-    unsigned int counter = 0, gen = 0;
+    unsigned int gen = 0;
 
     for(int i=0; i<G; i++){     
         pid_t pid = my_fork();      // Create a new process
@@ -162,10 +162,36 @@ void print_threads(short unsigned int N){
     if (thread_num != N-1) exit(0); // Exit children processes
 }
 
-int main(void) {
-    //int fd = STDOUT_FILENO; // File descriptor (using standard output for this example)
-    short unsigned int N = 3; // Number of iterations each process should perform
-    short unsigned int G = 2; // Maximum generation of processes
+/**
+ * Function: main
+ * --------------
+ * The main function of the program.
+ * 
+ * This function performs the following tasks:
+ * 1. Opens a file named out.txt. If the file already exists, its content will be re-written.
+ *    If the file does not exist, it will be created.
+ * 2. Calls the print_pids function with the file descriptor of out.txt and with argv[1] and argv[2]
+ *    as N and G respectively.
+ * 3. Calls the count_lines function to check the results of print_pids.
+ * 4. Calls the print_threads function with N.
+ * 
+ * Parameters:
+ *  argc - the number of command-line arguments
+ *  argv - an array of strings representing the command-line arguments
+ * 
+ * Returns:
+ *  0 on success, 1 on failure
+ */
+
+
+int main(int argc, char *argv[]) {
+    
+    //argc is the number of arguments passed to the program
+    //argv is an array of strings containing the arguments passed to the program
+    //argv[0] is the name of the program, argv[1] is the first argument, and so on.
+
+    short unsigned int N = (short unsigned int)atoi(argv[1]);   // Convert string to integer
+    short unsigned int G = (short unsigned int)atoi(argv[2]);   // Convert string to integer
 
     int fd = open("out.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644); // Open file for writing, creating it if it doesn't exist,\
                                                                          and truncating it if it does. 0644 is the file permissions.
@@ -173,12 +199,12 @@ int main(void) {
         perror("open");
         return 1;
     }
-    //print_pids(fd, N, G);   // Call task 2
+    print_pids(fd, N, G);   // Call task 2
     close(fd);  // Close file descriptor
 
-    //count_lines(G); // Call task 3
+    count_lines(G); // Call task 3
 
-    print_threads(10);
+    print_threads(N);
     return 0;
 }
 
