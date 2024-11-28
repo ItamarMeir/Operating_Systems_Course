@@ -145,21 +145,22 @@ void count_lines(short unsigned int G) {
  * Each thread will print: "Hi. I'm thread number i" where i is the i-th thread created.
  */
 
-void print_threads(short unsigned int N){
-    unsigned int thread_num;            // Thread number
-    for(int i=N-1; i>=1; i--){         // Loop through threads
-        pid_t pid = my_fork();        // Create a new process
-        thread_num = i;              // Set thread number
-        if (pid == 0){              
-            // Child process
-            thread_num = i-1;    // Decrement thread number
-            continue;        // Continue loop
-        }
-        break;          // The parent process should break the loop
+void print_threads(short unsigned int N) {
+    int *numThread = (int*)malloc(N*sizeof(int));
+    pthread_t *t = (pthread_t*) malloc(N*sizeof(pthread_t));
+    void *watingForThreadsByOrder;
+
+    for (int i=0; i < N; i++) {
+        numThread[i] = i;
+        pthread_create (&(t[i]), NULL, printme, &numThread[i]);
+        pthread_join(t[i], &watingForThreadsByOrder);
+
+        // printf("num[i]=%d, i=%d\n", numThread[i],i);
     }
-    wait(NULL); // Wait for the child to die
-    dprintf(STDOUT_FILENO, "Hi. I'm thread %d\n", thread_num);  // Print thread number
-    if (thread_num != N-1) exit(0); // Exit children processes
+
+    free(t);
+    free(numThread);
+    pthread_exit(NULL);
 }
 
 /**
