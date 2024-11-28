@@ -145,6 +145,14 @@ void count_lines(short unsigned int G) {
  * Each thread will print: "Hi. I'm thread number i" where i is the i-th thread created.
  */
 
+// Task4 ----------------------------------
+void *printThreads(void *id) {
+    int *i;
+    i = (int *)id;
+    printf("Hi. I'm thread %d\n", *i);
+    //exit(0);
+    return NULL;
+}
 void print_threads(short unsigned int N) {
     int *numThread = (int*)malloc(N*sizeof(int));
     pthread_t *t = (pthread_t*) malloc(N*sizeof(pthread_t));
@@ -152,7 +160,7 @@ void print_threads(short unsigned int N) {
 
     for (int i=0; i < N; i++) {
         numThread[i] = i;
-        pthread_create (&(t[i]), NULL, printme, &numThread[i]);
+        pthread_create (&(t[i]), NULL, printThreads, &numThread[i]);
         pthread_join(t[i], &watingForThreadsByOrder);
 
         // printf("num[i]=%d, i=%d\n", numThread[i],i);
@@ -162,7 +170,6 @@ void print_threads(short unsigned int N) {
     free(numThread);
     pthread_exit(NULL);
 }
-
 /**
  * Function: main
  * --------------
