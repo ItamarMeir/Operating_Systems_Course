@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <pthread.h>
 
 /**
  * Function: my_fork (1)
@@ -146,30 +147,30 @@ void count_lines(short unsigned int G) {
  */
 
 // Task4 ----------------------------------
-void *printThreads(void *id) {
-    int *i;
-    i = (int *)id;
-    printf("Hi. I'm thread %d\n", *i);
-    //exit(0);
-    return NULL;
+void *printThreads(void *id) {  // Function that prints the thread number
+    int *i;                // Initialize int pointer
+    i = (int *)id;          // Set pointer to id
+    printf("Hi. I'm thread %d\n", *i);  // Print thread number
+    return NULL;    
 }
 void print_threads(short unsigned int N) {
-    int *numThread = (int*)malloc(N*sizeof(int));
-    pthread_t *t = (pthread_t*) malloc(N*sizeof(pthread_t));
+    int *numThread = (int*)malloc(N*sizeof(int));           // Allocate memory for N thread numbers array
+    pthread_t *t = (pthread_t*) malloc(N*sizeof(pthread_t));    // Allocate memory for N threads array
     void *watingForThreadsByOrder;
 
     for (int i=0; i < N; i++) {
         numThread[i] = i;
-        pthread_create (&(t[i]), NULL, printThreads, &numThread[i]);
-        pthread_join(t[i], &watingForThreadsByOrder);
-
-        // printf("num[i]=%d, i=%d\n", numThread[i],i);
-    }
-
-    free(t);
-    free(numThread);
-    pthread_exit(NULL);
+        pthread_create (&(t[i]), NULL, printThreads, &numThread[i]);    // Create a thread that its address is stored in t[i],
+                                                                         // runs the printThreads function, and passes the thread number as an argument
+        pthread_join(t[i], &watingForThreadsByOrder);    // Wait for the thread to finish
+    } 
+    free(t);                 // Free memory
+    free(numThread);        // Free memory
+    //pthread_exit(NULL);     // Exit thread
 }
+
+    
+
 /**
  * Function: main
  * --------------
