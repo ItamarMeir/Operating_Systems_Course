@@ -5,9 +5,22 @@
 
 
 
-int* distanceVectore(int table_size, int *access_vector){
+
+
+
+int* distanceVector(int argc, char *argv[]){
+  int table_size = atoi(argv[1]);
+
+  int expected_elements = argc - 2;
+  int *access_vector = (int*)malloc(expected_elements * sizeof(int));
+  for (int i = 0; i < expected_elements; i++) {
+//    printf("%d ", atoi(argv[i+2]));
+    access_vector[i] = atoi(argv[i+2]);
+  }
+//  printf ("Elements = %d\n tableSize = %d\n", expected_elements, table_size);
 //  int itrNum = sizeof(access_vector) / sizeof(access_vector[0]);
-  int itrNum = 24;
+//  int itrNum = 24;
+  int itrNum = expected_elements;
   int *distances = (int *)malloc(itrNum * sizeof(int));
   int *myTable = (int *)malloc(sizeof(int));
   int *myTempTable;
@@ -17,22 +30,22 @@ int* distanceVectore(int table_size, int *access_vector){
   int table_size_local=0;
 
   for(int i = 0; i < itrNum; i++){
-    printf("\nTable size local: %d\n",table_size_local);
+//    printf("\nTable size local: %d\n",table_size_local);
     dis = -1; //INF
     for(int j = 0; j < table_size_local; j++){
        if(myTable[j] == access_vector[i]){
           dis=j+1; /// Starts from 0 and not from 1
-          printf("element foudnt!! dis= %d\n",dis);
+//          printf("element foudnt!! dis= %d\n",dis);
           break;
           }
        }
     distances[i] = dis;
-    printf("Curr num: %d\n",access_vector[i]);
-    printf("Elements: \n");
+//    printf("Curr num: %d\n",access_vector[i]);
+//    printf("Elements: \n");
     for(int j = 0; j < table_size_local; j++){
-        printf("%d, ",myTable[j]);
+//        printf("%d, ",myTable[j]);
     }
-    printf("dis = %d\n",dis);
+//    printf("dis = %d\n",dis);
 
 
     int indxOfMyTable=0;
@@ -75,19 +88,19 @@ int* distanceVectore(int table_size, int *access_vector){
 }
 
 
-int main() {
+int main(int argc, char* argv[]) {
 //    int access_vector[] = {1, 2, 3, 1, 2, 4, 1, 5};
-    printf("Hello, access like in Harzaha 11 Memory2:\n");
-    int access_vector[] = {0,2,1,3,5,4,6,3,7,4,7,3,3,5,5,3,1,1,1,7,1,3,4,1};
-    int table_size = 3;
-    int num_elements = sizeof(access_vector) / sizeof(access_vector[0]);
 
-    int *distances = distanceVectore(table_size, access_vector);
+//    printf("Hello, access like in Harzaha 11 Memory2:\n");
+//    int access_vector[] = {0,2,1,3,5,4,6,3,7,4,7,3,3,5,5,3,1,1,1,7,1,3,4,1};
+//    int table_size = 3;
+//    int num_elements = sizeof(access_vector) / sizeof(access_vector[0]);
+//    int *distances = distanceVectore(table_size, access_vector);
 
-    printf("Access:\n");
-    for (int i = 0; i < num_elements; i++) {
-        printf("%d ", access_vector[i]);
-    }
+    int *distances = distanceVector(argc, argv);
+
+    int num_elements = argc - 2;
+
     printf("\n");
     printf("Distances:\n");
     for (int i = 0; i < num_elements; i++) {
